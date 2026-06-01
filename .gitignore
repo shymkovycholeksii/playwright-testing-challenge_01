@@ -1,0 +1,21 @@
+# Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest
+.pytest_cache/
+
+# IDEs and Editors
+.vscode/
+.idea/
+pyrightconfig.json
+
+# OS files
+.DS_Store
