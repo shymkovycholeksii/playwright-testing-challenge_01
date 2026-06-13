@@ -18,7 +18,7 @@ THROTTLING NOTE (ВАЖНО):
 """
 
 import pytest
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 
 # ── Константы ─────────────────────────────────────────────────────────────────
 BASE_URL = "http://testingchallenges.thetestingmap.org/index.php"
@@ -52,7 +52,7 @@ def submit_form(page: Page, first_name_value: str) -> None:
 
     # .first — если на странице случайно окажется > 1 submit, не упадём
     page.locator(SUBMIT_SELECTOR).first.click()
-    page.wait_for_load_state("domcontentloaded")
+    expect(page.locator("body")).to_contain_text("Checks found")
 
 
 def page_text(page: Page) -> str:

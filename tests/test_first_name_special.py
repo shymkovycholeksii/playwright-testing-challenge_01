@@ -16,7 +16,7 @@ THROTTLING NOTE (ВАЖНО):
 import re
 
 import pytest
-from playwright.sync_api import BrowserContext, Page
+from playwright.sync_api import BrowserContext, Page, expect
 
 # ── Константы ─────────────────────────────────────────────────────────────────
 BASE_URL = "http://testingchallenges.thetestingmap.org/index.php"
@@ -43,7 +43,7 @@ def fill_and_submit(page: Page, value: str) -> None:
     """Вводит значение в First Name и отправляет форму."""
     page.locator(FIRST_NAME_SELECTOR).fill(value)
     page.locator(SUBMIT_SELECTOR).first.click()
-    page.wait_for_load_state("domcontentloaded")
+    expect(page.locator("body")).to_contain_text("Checks found")
 
 
 def page_text(page: Page) -> str:
