@@ -1,5 +1,7 @@
 # Testing Challenges — Playwright UI Test Suite
 
+[![Playwright Tests](https://github.com/shymkovycholeksii/playwright-testing-challenge_01/actions/workflows/tests.yml/badge.svg)](https://github.com/shymkovycholeksii/playwright-testing-challenge_01/actions/workflows/tests.yml)
+
 Набор автоматизированных UI-тестов на **Python + Playwright** для покрытия
 18 проверок поля «First Name» на стенде
 [testingchallenges.thetestingmap.org](http://testingchallenges.thetestingmap.org/index.php).
@@ -111,6 +113,40 @@ pytest tests/ -v -m dom_manipulation    # TC16–TC18
 
 При расширении проекта (новый стенд, дополнительные поля) достаточно
 исправить `constants.py` — все тест-файлы подхватят изменения автоматически.
+
+---
+
+## CI/CD — GitHub Actions
+
+Проект использует **GitHub Actions** для автоматического запуска тестов:
+[`.github/workflows/tests.yml`](.github/workflows/tests.yml)
+
+### Триггеры
+- `push` в ветку `main`
+- `pull_request` к ветке `main`
+
+### Шаги пайплайна
+
+| Шаг | Действие |
+|---|---|
+| Checkout | Скачивает код репозитория |
+| Set up Python 3.11 | Устанавливает Python с кэшированием pip |
+| Install dependencies | `pip install -r requirements.txt` |
+| Install Chromium | `playwright install chromium --with-deps` |
+| Run tests | `pytest` с `--html=report.html` |
+| Upload HTML report | Сохраняет отчёт 30 дней как Artifact |
+
+### Просмотр отчёта
+
+1. Открыть вкладку **Actions** на GitHub
+2. Выбрать нужный запуск
+3. В самом низу страницы найти **Artifacts** → скачать `playwright-report-N.zip`
+4. Распаковать архив и открыть `report.html` в браузере
+
+### Отчётность (портфолио)
+
+Используется **`pytest-html`** — генерирует портативный HTML-отчёт с деталями по каждому тесту.
+Один файл `report.html` содержит все результаты и CSS — без внешних зависимостей.
 
 ---
 

@@ -1,0 +1,54 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run Playwright Test Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Python ────────────────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ── 3. Dependencies ──────────────────────────────────────────────────────
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      # ── 4. Playwright browser ────────────────────────────────────────────────
+      # --with-deps устанавливает системные библиотеки, нужные Chromium на Ubuntu
+      - name: Install Chromium browser
+        run: python -m playwright install chromium --with-deps
+
+      # ── 5. Tests ─────────────────────────────────────────────────────────────
+      # --throttle-ms=300 — небольшой запас для CI (сеть медленнее локальной)
+      # --html / --self-contained-html — единый portable HTML-отчёт
+      # if: always() у следующих шагов гарантирует сохранение отчёта даже при падении тестов
+      - name: Run tests
+        run: |
+          pytest tests/ \
+            --throttle-ms=300 \
+            --html=report.html \
+            --self-contained-html
+        continue-on-error: true   # не блокируем шаг Upload при падении тестов
+
+      # ── 6. Upload report ─────────────────────────────────────────────────────
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_number }}
+          path: report.html
+          retention-days: 30
