@@ -20,17 +20,12 @@ THROTTLING NOTE (ВАЖНО):
 import pytest
 from playwright.sync_api import Page, expect
 
-# ── Константы ─────────────────────────────────────────────────────────────────
-BASE_URL = "http://testingchallenges.thetestingmap.org/index.php"
-
-# Дополнительная пауза перед каждым тестом (throttle layer 2).
-# Даже без slow_mo это гарантирует ≤ 5 req/s.
-INTER_TEST_DELAY_MS = 200
-
-# Локаторы по атрибуту name/type — надёжны при изменении вёрстки.
-FIRST_NAME_SELECTOR = 'input[name="firstname"]'
-# .first — защита от strict mode violation, если сабмит-кнопок > 1
-SUBMIT_SELECTOR     = 'input[type="submit"], button[type="submit"]'
+from tests.constants import (
+    BASE_URL,
+    FIRST_NAME_SELECTOR,
+    INTER_TEST_DELAY_MS,
+    SUBMIT_SELECTOR,
+)
 
 
 # ── Вспомогательные функции ───────────────────────────────────────────────────
@@ -206,7 +201,7 @@ def test_first_name_field(
     # Финальная проверка — наличие текста чека на странице ответа.
     # Сайт всегда отображает список всех чеков (пройденных и нет).
     body = page_text(page)
-    assert check_name in body or check_name.lower() in body.lower(), (
+    assert check_name.lower() in body.lower(), (
         f"[{check_id}] Чек '{check_name}' не найден в ответе сервера.\n"
         f"Описание: {description}\n"
         f"Payload: {repr(input_value)}\n"

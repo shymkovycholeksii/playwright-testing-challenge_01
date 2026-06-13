@@ -12,9 +12,6 @@ import pytest
 
 
 # ── конфигурация ──────────────────────────────────────────────────────────────
-# Задержка между запросами (мс).  ≥ 34 мс = < 30 req/s.
-# Установлено 200 мс — безопасный запас с учётом RTT.
-PAGE_DELAY_MS = 200
 
 
 def pytest_configure(config):
@@ -31,7 +28,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--throttle-ms",
         action="store",
-        default=str(PAGE_DELAY_MS),
+        default="200",
         help="Пауза slow_mo между Playwright-вызовами (мс). По умолчанию 200.",
     )
 

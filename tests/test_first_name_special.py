@@ -18,16 +18,13 @@ import re
 import pytest
 from playwright.sync_api import BrowserContext, Page, expect
 
-# ── Константы ─────────────────────────────────────────────────────────────────
-BASE_URL = "http://testingchallenges.thetestingmap.org/index.php"
-
-# Throttle-пауза между навигационными запросами (мс).
-INTER_TEST_DELAY_MS = 200
-
-# Надёжные локаторы по атрибуту name / type
-FIRST_NAME_SELECTOR  = 'input[name="firstname"]'
-SUBMIT_SELECTOR      = 'input[type="submit"], button[type="submit"]'
-ADMIN_FIELD_SELECTOR = 'input[name="user_right_as_admin"]'
+from tests.constants import (
+    ADMIN_FIELD_SELECTOR,
+    BASE_URL,
+    FIRST_NAME_SELECTOR,
+    INTER_TEST_DELAY_MS,
+    SUBMIT_SELECTOR,
+)
 
 
 # ── Вспомогательные функции ───────────────────────────────────────────────────
@@ -118,7 +115,7 @@ def test_tc16_you_looked_at_the_cookie(context: BrowserContext, page: Page) -> N
     # ── 4. Проверяем результат ────────────────────────────────────────────────
     body = page_text(page)
     check_name = "You looked at the cookie"
-    assert check_name in body or check_name.lower() in body.lower(), (
+    assert check_name.lower() in body.lower(), (
         f"TC16: Чек '{check_name}' не засчитан.\n"
         f"Использованный токен: {token_value!r}\n"
         f"URL после сабмита: {page.url}"
@@ -177,7 +174,7 @@ def test_tc17_you_looked_at_the_page_source(page: Page) -> None:
     # ── 4. Проверяем результат ────────────────────────────────────────────────
     body = page_text(page)
     check_name = "You looked at the page source"
-    assert check_name in body or check_name.lower() in body.lower(), (
+    assert check_name.lower() in body.lower(), (
         f"TC17: Чек '{check_name}' не засчитан.\n"
         f"Использованный токен: {token_value!r}\n"
         f"URL после сабмита: {page.url}"
@@ -250,7 +247,7 @@ def test_tc18_you_made_the_user_admin(page: Page) -> None:
     # ── 3. Проверяем результат ────────────────────────────────────────────────
     body = page_text(page)
     check_name = "You made the user admin"
-    assert check_name in body or check_name.lower() in body.lower(), (
+    assert check_name.lower() in body.lower(), (
         f"TC18: Чек '{check_name}' не засчитан.\n"
         f"URL после сабмита: {page.url}\n"
         "Убедитесь, что поле user_right_as_admin существует на странице "

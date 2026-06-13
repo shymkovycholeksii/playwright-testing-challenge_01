@@ -10,12 +10,12 @@
 
 ```
 Project_Test_Playwright/
-├── conftest.py                          # Глобальная конфигурация pytest-playwright
 ├── pytest.ini                           # Настройки pytest: маркеры, addopts
 ├── requirements.txt                     # Зависимости
 ├── README.md
 └── tests/
-    ├── __init__.py
+    ├── constants.py                     # Централизованные константы (URL, селекторы, тайм-ауты)
+    ├── conftest.py                      # Глобальная конфигурация pytest-playwright
     ├── test_first_name_data_driven.py   # TC01–TC15 (параметризованные)
     └── test_first_name_special.py       # TC16–TC18 (DOM / Cookie / JS)
 ```
@@ -93,6 +93,24 @@ pytest tests/ -v --throttle-ms=400
 pytest tests/ -v -m first_name          # TC01–TC15
 pytest tests/ -v -m dom_manipulation    # TC16–TC18
 ```
+
+---
+
+## Архитектура: централизованные константы
+
+Все значения, используемые более чем в одном файле, определены в
+[`tests/constants.py`](tests/constants.py):
+
+| Константа | Значение | Где используется |
+|---|---|---|
+| `BASE_URL` | URL стенда | оба тест-файла |
+| `INTER_TEST_DELAY_MS` | `200` мс | оба тест-файла |
+| `FIRST_NAME_SELECTOR` | `input[name="firstname"]` | оба тест-файла |
+| `SUBMIT_SELECTOR` | `input[type="submit"], ...` | оба тест-файла |
+| `ADMIN_FIELD_SELECTOR` | `input[name="user_right_as_admin"]` | `test_first_name_special.py` |
+
+При расширении проекта (новый стенд, дополнительные поля) достаточно
+исправить `constants.py` — все тест-файлы подхватят изменения автоматически.
 
 ---
 
