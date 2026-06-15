@@ -23,6 +23,7 @@ def pytest_configure(config):
     )
     config.addinivalue_line("markers", "challenge2: тесты для Challenge #2 (Bypass HTML5 Validation)")
     config.addinivalue_line("markers", "challenge4: тесты для Challenge #4 (Generate Testing Data)")
+    config.addinivalue_line("markers", "challenge5: тесты для Challenge #5 (Web Analytics Engine)")
 
 
 def pytest_addoption(parser):
