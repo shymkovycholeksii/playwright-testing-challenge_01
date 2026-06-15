@@ -22,6 +22,7 @@ def pytest_configure(config):
         "dom_manipulation: тесты с Cookie / JS / Page Source (TC16–TC18)",
     )
     config.addinivalue_line("markers", "challenge2: тесты для Challenge #2 (Bypass HTML5 Validation)")
+    config.addinivalue_line("markers", "challenge4: тесты для Challenge #4 (Generate Testing Data)")
 
 
 def pytest_addoption(parser):
