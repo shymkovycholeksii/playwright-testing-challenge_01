@@ -3,7 +3,7 @@
 [![Playwright Tests](https://github.com/shymkovycholeksii/playwright-testing-challenge_01/actions/workflows/tests.yml/badge.svg)](https://github.com/shymkovycholeksii/playwright-testing-challenge_01/actions/workflows/tests.yml)
 
 A suite of automated UI tests in **Python + Playwright** to cover
-18 checks for the "First Name" field on the environment
+various challenges on the environment
 [testingchallenges.thetestingmap.org](http://testingchallenges.thetestingmap.org/index.php).
 
 ---
@@ -18,14 +18,18 @@ Project_Test_Playwright/
 └── tests/
     ├── constants.py                     # Centralized constants (URL, selectors, timeouts)
     ├── conftest.py                      # Global pytest-playwright configuration
-    ├── test_first_name_data_driven.py   # TC01–TC15 (parameterized)
-    └── test_first_name_special.py       # TC16–TC18 (DOM / Cookie / JS)
+    ├── test_first_name_data_driven.py   # Challenge #1: TC01–TC15 (parameterized)
+    ├── test_first_name_special.py       # Challenge #1: TC16–TC18 (DOM / Cookie / JS)
+    ├── test_challenge_2_bypass_html5.py # Challenge #2: Bypass HTML5 Validation
+    ├── test_challenge_4_data_generation.py # Challenge #4: Generate Testing Data
+    └── test_challenge_5_analytics.py    # Challenge #5: Web Analytics Engine
 ```
 
 ---
 
 ## Covered Test Cases
 
+### Challenge #1 (First Name)
 | # | pytest ID | Check Name | Payload |
 |---|-----------|---------------|---------|
 | 1 | TC01_minimum_value | Minimum value | `A` |
@@ -47,6 +51,25 @@ Project_Test_Playwright/
 | 17 | test_tc17_you_looked_at_the_page_source | You looked at the page source | token from HTML comment |
 | 18 | test_tc18_you_made_the_user_admin | You made the user admin | JS: value '0'→'1' |
 
+### Challenge #2 (Bypass HTML5 Validation)
+| # | pytest ID | Check Name | Payload |
+|---|-----------|---------------|---------|
+| 19 | test_challenge2_bypass_html5_validation | Bypass HTML5 validation | `bypassed` |
+
+### Challenge #4 (Generate Testing Data)
+| # | pytest ID | Check Name | Payload (Romanian CNP) |
+|---|-----------|---------------|---------|
+| 20 | test_tc1_male_born_2000s | Male, born 2000s | `5160520011230` |
+| 21 | test_tc2_female_born_2000s | Female, born 2000s | `6181130424565` |
+| 22 | test_tc3_male_born_1900s | Male, born 1900s | `1990101157898` |
+| 23 | test_tc4_female_born_1900s | Female, born 1900s | `2801225529992` |
+| 24 | test_tc5_foreign_resident | Foreign citizen resident | `7220714331116` |
+
+### Challenge #5 (Using a Web Analytics Engine)
+| # | pytest ID | Check Name | Payload |
+|---|-----------|---------------|---------|
+| 25 | test_challenge5_analytics_engine_down | Simulate Engine down | Network interception |
+
 ---
 
 ## Installation
@@ -60,19 +83,18 @@ python3 -m playwright install chromium
 
 ## Running Tests
 
-### All 18 tests (headless, throttle 200 ms)
+### All tests (headless, throttle 200 ms)
 ```bash
 pytest tests/ -v
 ```
 
-### Only data-driven tests (TC01–TC15)
+### Run specific challenge tests
 ```bash
 pytest tests/test_first_name_data_driven.py -v
-```
-
-### Only specific tests (TC16–TC18)
-```bash
 pytest tests/test_first_name_special.py -v
+pytest tests/test_challenge_2_bypass_html5.py -v
+pytest tests/test_challenge_4_data_generation.py -v
+pytest tests/test_challenge_5_analytics.py -v
 ```
 
 ### Run one specific test
@@ -92,8 +114,11 @@ pytest tests/ -v --throttle-ms=400
 
 ### Run only marked tests
 ```bash
-pytest tests/ -v -m first_name          # TC01–TC15
-pytest tests/ -v -m dom_manipulation    # TC16–TC18
+pytest tests/ -v -m first_name          # Challenge #1
+pytest tests/ -v -m dom_manipulation    # TC16-18, Challenge #2, #5
+pytest tests/ -v -m challenge2          # Challenge #2
+pytest tests/ -v -m challenge4          # Challenge #4
+pytest tests/ -v -m challenge5          # Challenge #5
 ```
 
 ---
@@ -172,16 +197,25 @@ throttle configuration.
 
 ## Specific Tests Description
 
-### TC16 — You looked at the cookie
+### Challenge #1: TC16 — You looked at the cookie
 Reads all domain cookies via `context.cookies()`, filters out technical ones
 (`PHPSESSID`, etc.) and inputs the secret cookie value into the First Name field.
 
-### TC17 — You looked at the page source
+### Challenge #1: TC17 — You looked at the page source
 Gets the HTML via `page.content()`, searches for a hidden comment like
 `<!-- token -->` with two regex patterns (strict → broad fallback),
 inputs the found token into the First Name field.
 
-### TC18 — You made the user admin
+### Challenge #1: TC18 — You made the user admin
 Executes JS via `page.evaluate()`, finds the hidden
 `input[name="user_right_as_admin"]`, changes `value` from `'0'` to `'1'`,
 removes `hidden`/`disabled` attributes, then submits the form.
+
+### Challenge #2: Bypass HTML5 Validation
+Uses JS via `page.evaluate()` to dynamically change an input field's type attribute from `number` to `text`. This disables built-in browser constraints, allowing non-numeric text submission.
+
+### Challenge #4: Generate Testing Data
+Validates a custom algorithm that generates valid Romanian Personal Identification Numbers (CNPs) according to the official spec across different categories (gender, century, residence) and inputs them iteratively.
+
+### Challenge #5: Simulate Analytics Engine Down
+Uses Playwright's network routing (`page.route()`) to intercept and immediately abort outgoing requests to a specific analytics URL, mimicking an outage and triggering the application's client-side timeout logic.
