@@ -1,52 +1,52 @@
 """
-conftest.py — глобальная конфигурация pytest-playwright.
+conftest.py — global pytest-playwright configuration.
 
 THROTTLING NOTE:
-  Целевой сервер http://testingchallenges.thetestingmap.org/ блокирует
-  клиентов при превышении 30 запросов/сек с одного IP.
-  Задержка задаётся параметром --throttle-ms (по умолчанию 200 мс)
-  и применяется через slow_mo на уровне запуска браузера.
+  The target server http://testingchallenges.thetestingmap.org/ blocks
+  clients that exceed 30 requests/sec from a single IP.
+  The delay is set via the --throttle-ms parameter (default: 200 ms)
+  and is applied through slow_mo at the browser launch level.
 """
 
 import pytest
 
 
-# ── конфигурация ──────────────────────────────────────────────────────────────
+# ── configuration ────────────────────────────────────────────────────────────
 
 
 def pytest_configure(config):
-    """Регистрируем кастомные маркеры."""
-    config.addinivalue_line("markers", "first_name: тесты поля First Name (TC01–TC15)")
+    """Register custom markers."""
+    config.addinivalue_line("markers", "first_name: tests for the First Name field (TC01–TC15)")
     config.addinivalue_line(
         "markers",
-        "dom_manipulation: тесты с Cookie / JS / Page Source (TC16–TC18)",
+        "dom_manipulation: tests with Cookie / JS / Page Source manipulation (TC16–TC18)",
     )
-    config.addinivalue_line("markers", "challenge2: тесты для Challenge #2 (Bypass HTML5 Validation)")
-    config.addinivalue_line("markers", "challenge4: тесты для Challenge #4 (Generate Testing Data)")
-    config.addinivalue_line("markers", "challenge5: тесты для Challenge #5 (Web Analytics Engine)")
+    config.addinivalue_line("markers", "challenge2: tests for Challenge #2 (Bypass HTML5 Validation)")
+    config.addinivalue_line("markers", "challenge4: tests for Challenge #4 (Generate Testing Data)")
+    config.addinivalue_line("markers", "challenge5: tests for Challenge #5 (Web Analytics Engine)")
 
 
 def pytest_addoption(parser):
-    """Добавляем CLI-опцию --throttle-ms для управления паузой."""
+    """Add the --throttle-ms CLI option to control the slow_mo delay."""
     parser.addoption(
         "--throttle-ms",
         action="store",
         default="200",
-        help="Пауза slow_mo между Playwright-вызовами (мс). По умолчанию 200.",
+        help="slow_mo delay between Playwright calls (ms). Default: 200.",
     )
 
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args, pytestconfig):
     """
-    Устанавливаем slow_mo на уровне запуска браузера.
+    Apply slow_mo at the browser launch level.
 
-    slow_mo добавляет задержку (мс) после каждого Playwright-вызова —
-    это гарантирует, что частота HTTP-запросов к серверу не превысит
-    1000 / slow_mo запросов в секунду.
+    slow_mo adds a delay (ms) after each Playwright call,
+    ensuring the HTTP request rate to the server does not exceed
+    1000 / slow_mo requests per second.
     """
     throttle = int(pytestconfig.getoption("--throttle-ms"))
     return {
         **browser_type_launch_args,
-        "slow_mo": throttle,  # задержка после каждого Playwright-действия
+        "slow_mo": throttle,  # delay after each Playwright action
     }

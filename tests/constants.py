@@ -1,24 +1,24 @@
 """
 tests/constants.py
 ==================
-Централизованные константы для всего тест-сьюта.
+Centralized constants for the entire test suite.
 
-Все значения, используемые более чем в одном файле, определяются здесь.
-При изменении окружения (URL стенда, тайм-ауты) достаточно исправить
-этот файл — все тест-файлы подхватят изменения автоматически.
+All values used in more than one file are defined here.
+When the environment changes (base URL, timeouts), only this
+file needs to be updated — all test files will pick up the changes automatically.
 """
 
-# ── Адрес стенда ──────────────────────────────────────────────────────────────
+# ── Base URL ──────────────────────────────────────────────────────────────────
 BASE_URL = "http://testingchallenges.thetestingmap.org/index.php"
 
 # ── Throttling ────────────────────────────────────────────────────────────────
-# Сервер блокирует клиентов при > 30 req/s с одного IP.
-# ≥ 34 мс = < 30 req/s; 200 мс — безопасный запас с учётом RTT.
+# The server blocks clients exceeding > 30 req/s from a single IP.
+# ≥ 34 ms = < 30 req/s; 200 ms is a safe margin accounting for RTT.
 INTER_TEST_DELAY_MS = 200
 
-# ── Локаторы формы ────────────────────────────────────────────────────────────
-# Используют атрибут name/type — надёжны при изменении вёрстки.
+# ── Form locators ─────────────────────────────────────────────────────────────
+# Use the name/type attribute — resilient to markup changes.
 FIRST_NAME_SELECTOR  = 'input[name="firstname"]'
-# .first — защита от strict mode violation, если кнопок submit > 1
+# .first — guards against strict mode violation if there is more than one submit button
 SUBMIT_SELECTOR      = 'input[type="submit"], button[type="submit"]'
 ADMIN_FIELD_SELECTOR = 'input[name="user_right_as_admin"]'

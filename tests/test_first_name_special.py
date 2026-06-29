@@ -1,16 +1,16 @@
 """
 tests/test_first_name_special.py
 ==================================
-Тест-кейсы 16–18: Специфические проверки, требующие манипуляций
-с DOM, Cookies и JavaScript на стенде:
+Test cases 16–18: Specialised checks requiring DOM, Cookie and JavaScript
+manipulation on the test site:
 http://testingchallenges.thetestingmap.org/index.php
 
-THROTTLING NOTE (ВАЖНО):
-    Целевой сервер блокирует IP при > 30 запросов в секунду.
-    Между каждым навигационным вызовом page.goto() выставлена явная
-    пауза INTER_TEST_DELAY_MS = 200 мс.  В сочетании со slow_mo = 200 мс
-    (задаётся в conftest.py) суммарная задержка ≥ 400 мс между запросами,
-    что соответствует ≈ 2.5 req/s — хорошо ниже лимита 30 req/s.
+THROTTLING NOTE:
+    The target server blocks IPs that exceed 30 requests per second.
+    An explicit pause of INTER_TEST_DELAY_MS = 200 ms is set before every
+    page.goto() call. Combined with slow_mo = 200 ms (configured in conftest.py)
+    the total delay between requests is ≥ 400 ms,
+    which equals ≈ 2.5 req/s — well below the 30 req/s limit.
 """
 
 import re
@@ -27,24 +27,24 @@ from tests.constants import (
 )
 
 
-# ── Вспомогательные функции ───────────────────────────────────────────────────
+# ── Helper functions ─────────────────────────────────────────────────────────
 
 def open_page(page: Page) -> None:
-    """Открывает стенд с паузой-throttle перед запросом."""
+    """Navigates to the test site with a throttle pause before the request."""
     page.wait_for_timeout(INTER_TEST_DELAY_MS)
     page.goto(BASE_URL, wait_until="domcontentloaded")
     page.wait_for_selector(FIRST_NAME_SELECTOR)
 
 
 def fill_and_submit(page: Page, value: str) -> None:
-    """Вводит значение в First Name и отправляет форму."""
+    """Fills the First Name field and submits the form."""
     page.locator(FIRST_NAME_SELECTOR).fill(value)
     page.locator(SUBMIT_SELECTOR).first.click()
     expect(page.locator("body")).to_contain_text("Checks found")
 
 
 def page_text(page: Page) -> str:
-    """Возвращает текстовое содержимое <body>."""
+    """Returns the text content of the <body> element."""
     return page.inner_text("body")
 
 
