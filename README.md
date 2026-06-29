@@ -2,35 +2,35 @@
 
 [![Playwright Tests](https://github.com/shymkovycholeksii/playwright-testing-challenge_01/actions/workflows/tests.yml/badge.svg)](https://github.com/shymkovycholeksii/playwright-testing-challenge_01/actions/workflows/tests.yml)
 
-Набор автоматизированных UI-тестов на **Python + Playwright** для покрытия
-18 проверок поля «First Name» на стенде
+A suite of automated UI tests in **Python + Playwright** to cover
+18 checks for the "First Name" field on the environment
 [testingchallenges.thetestingmap.org](http://testingchallenges.thetestingmap.org/index.php).
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 Project_Test_Playwright/
-├── pytest.ini                           # Настройки pytest: маркеры, addopts
-├── requirements.txt                     # Зависимости
+├── pytest.ini                           # pytest settings: markers, addopts
+├── requirements.txt                     # Dependencies
 ├── README.md
 └── tests/
-    ├── constants.py                     # Централизованные константы (URL, селекторы, тайм-ауты)
-    ├── conftest.py                      # Глобальная конфигурация pytest-playwright
-    ├── test_first_name_data_driven.py   # TC01–TC15 (параметризованные)
+    ├── constants.py                     # Centralized constants (URL, selectors, timeouts)
+    ├── conftest.py                      # Global pytest-playwright configuration
+    ├── test_first_name_data_driven.py   # TC01–TC15 (parameterized)
     └── test_first_name_special.py       # TC16–TC18 (DOM / Cookie / JS)
 ```
 
 ---
 
-## Покрытые тест-кейсы
+## Covered Test Cases
 
-| # | ID pytest | Название чека | Payload |
+| # | pytest ID | Check Name | Payload |
 |---|-----------|---------------|---------|
 | 1 | TC01_minimum_value | Minimum value | `A` |
-| 2 | TC02_maximum_value | Maximum values | `Abcdefghijklmnopqrstuvwxyzabcd` (30 симв.) |
-| 3 | TC03_more_than_maximum | More than maximum values | `Abcdefghijklmnopqrstuvwxyzabcde` (31 симв.) |
+| 2 | TC02_maximum_value | Maximum values | `Abcdefghijklmnopqrstuvwxyzabcd` (30 chars) |
+| 3 | TC03_more_than_maximum | More than maximum values | `Abcdefghijklmnopqrstuvwxyzabcde` (31 chars) |
 | 4 | TC04_average_value | Average value | `John` |
 | 5 | TC05_empty_value | Empty value | `""` |
 | 6 | TC06_space | Space | `" "` |
@@ -43,13 +43,13 @@ Project_Test_Playwright/
 | 13 | TC13_xss | Basic XSS | `<script>alert(1)</script>` |
 | 14 | TC14_sql_injection | Basic Sql injection | `' OR '1'='1` |
 | 15 | TC15_missing_css | Missing css | `detailsoverviewnow.css` |
-| 16 | test_tc16_you_looked_at_the_cookie | You looked at the cookie | значение из Cookie |
-| 17 | test_tc17_you_looked_at_the_page_source | You looked at the page source | токен из HTML-комментария |
+| 16 | test_tc16_you_looked_at_the_cookie | You looked at the cookie | Cookie value |
+| 17 | test_tc17_you_looked_at_the_page_source | You looked at the page source | token from HTML comment |
 | 18 | test_tc18_you_made_the_user_admin | You made the user admin | JS: value '0'→'1' |
 
 ---
 
-## Установка зависимостей
+## Installation
 
 ```bash
 pip3 install -r requirements.txt --break-system-packages
@@ -58,24 +58,24 @@ python3 -m playwright install chromium
 
 ---
 
-## Запуск тестов
+## Running Tests
 
-### Все 18 тестов (headless, throttle 200 мс)
+### All 18 tests (headless, throttle 200 ms)
 ```bash
 pytest tests/ -v
 ```
 
-### Только data-driven тесты (TC01–TC15)
+### Only data-driven tests (TC01–TC15)
 ```bash
 pytest tests/test_first_name_data_driven.py -v
 ```
 
-### Только специфические тесты (TC16–TC18)
+### Only specific tests (TC16–TC18)
 ```bash
 pytest tests/test_first_name_special.py -v
 ```
 
-### Запуск одного конкретного теста
+### Run one specific test
 ```bash
 pytest tests/ -v -k "TC13_xss"
 ```
@@ -85,12 +85,12 @@ pytest tests/ -v -k "TC13_xss"
 pytest tests/ -v --headed
 ```
 
-### Увеличить паузу между запросами (двойной throttle)
+### Increase pause between requests (double throttle)
 ```bash
 pytest tests/ -v --throttle-ms=400
 ```
 
-### Запуск только помеченных тестов
+### Run only marked tests
 ```bash
 pytest tests/ -v -m first_name          # TC01–TC15
 pytest tests/ -v -m dom_manipulation    # TC16–TC18
@@ -98,90 +98,90 @@ pytest tests/ -v -m dom_manipulation    # TC16–TC18
 
 ---
 
-## Архитектура: централизованные константы
+## Architecture: Centralized Constants
 
-Все значения, используемые более чем в одном файле, определены в
+All values used in more than one file are defined in
 [`tests/constants.py`](tests/constants.py):
 
-| Константа | Значение | Где используется |
+| Constant | Value | Where it is used |
 |---|---|---|
-| `BASE_URL` | URL стенда | оба тест-файла |
-| `INTER_TEST_DELAY_MS` | `200` мс | оба тест-файла |
-| `FIRST_NAME_SELECTOR` | `input[name="firstname"]` | оба тест-файла |
-| `SUBMIT_SELECTOR` | `input[type="submit"], ...` | оба тест-файла |
+| `BASE_URL` | Environment URL | both test files |
+| `INTER_TEST_DELAY_MS` | `200` ms | both test files |
+| `FIRST_NAME_SELECTOR` | `input[name="firstname"]` | both test files |
+| `SUBMIT_SELECTOR` | `input[type="submit"], ...` | both test files |
 | `ADMIN_FIELD_SELECTOR` | `input[name="user_right_as_admin"]` | `test_first_name_special.py` |
 
-При расширении проекта (новый стенд, дополнительные поля) достаточно
-исправить `constants.py` — все тест-файлы подхватят изменения автоматически.
+When expanding the project (new environment, additional fields), it is enough to
+edit `constants.py` — all test files will pick up the changes automatically.
 
 ---
 
 ## CI/CD — GitHub Actions
 
-Проект использует **GitHub Actions** для автоматического запуска тестов:
+The project uses **GitHub Actions** to automatically run tests:
 [`.github/workflows/tests.yml`](.github/workflows/tests.yml)
 
-### Триггеры
-- `push` в ветку `main`
-- `pull_request` к ветке `main`
+### Triggers
+- `push` to the `main` branch
+- `pull_request` to the `main` branch
 
-### Шаги пайплайна
+### Pipeline Steps
 
-| Шаг | Действие |
+| Step | Action |
 |---|---|
-| Checkout | Скачивает код репозитория |
-| Set up Python 3.11 | Устанавливает Python с кэшированием pip |
+| Checkout | Downloads the repository code |
+| Set up Python 3.11 | Installs Python with pip caching |
 | Install dependencies | `pip install -r requirements.txt` |
 | Install Chromium | `playwright install chromium --with-deps` |
-| Run tests | `pytest` с `--html=report.html` |
-| Upload HTML report | Сохраняет отчёт 30 дней как Artifact |
+| Run tests | `pytest` with `--html=report.html` |
+| Upload HTML report | Saves the report for 30 days as an Artifact |
 
-### Просмотр отчёта
+### Viewing the Report
 
-1. Открыть вкладку **Actions** на GitHub
-2. Выбрать нужный запуск
-3. В самом низу страницы найти **Artifacts** → скачать `playwright-report-N.zip`
-4. Распаковать архив и открыть `report.html` в браузере
+1. Open the **Actions** tab on GitHub
+2. Select the desired run
+3. At the bottom of the page find **Artifacts** → download `playwright-report-N.zip`
+4. Unpack the archive and open `report.html` in a browser
 
-### Отчётность (портфолио)
+### Reporting (Portfolio)
 
-Используется **`pytest-html`** — генерирует портативный HTML-отчёт с деталями по каждому тесту.
-Один файл `report.html` содержит все результаты и CSS — без внешних зависимостей.
+It uses **`pytest-html`** — generates a portable HTML report with details for each test.
+A single `report.html` file contains all results and CSS — without external dependencies.
 
 ---
 
-## Throttling / Защита от бана по IP
+## Throttling / IP Ban Protection
 
-> ⚠️ **Сервер блокирует клиентов при > 30 запросов/сек с одного IP.**
+> ⚠️ **The server blocks clients at > 30 requests/sec from a single IP.**
 
-Реализована двухуровневая защита:
+A two-level protection is implemented:
 
-| Слой | Механизм | Где задаётся |
+| Layer | Mechanism | Where it is set |
 |------|----------|--------------|
-| 1 | `slow_mo=200мс` — задержка после каждого Playwright-вызова | `conftest.py → browser_type_launch_args` |
-| 2 | `page.wait_for_timeout(200мс)` — явная пауза перед `page.goto()` | начало каждого теста |
+| 1 | `slow_mo=200ms` — delay after each Playwright call | `conftest.py → browser_type_launch_args` |
+| 2 | `page.wait_for_timeout(200ms)` — explicit pause before `page.goto()` | start of each test |
 
-**Итого:** ≥ 400 мс между последовательными HTTP-запросами ≈ **2.5 req/s**
-— в 12 раз ниже лимита 30 req/s.
+**Total:** ≥ 400 ms between consecutive HTTP requests ≈ **2.5 req/s**
+— 12 times below the 30 req/s limit.
 
-Тесты намеренно запускаются **последовательно** (не параллельно).
-Не используйте `pytest-xdist` с несколькими воркерами без дополнительной
-настройки throttle.
+The tests are intentionally run **sequentially** (not in parallel).
+Do not use `pytest-xdist` with multiple workers without additional
+throttle configuration.
 
 ---
 
-## Описание специфических тестов
+## Specific Tests Description
 
 ### TC16 — You looked at the cookie
-Читает все куки домена через `context.cookies()`, фильтрует технические
-(`PHPSESSID` и т.п.) и вставляет значение секретной куки в поле First Name.
+Reads all domain cookies via `context.cookies()`, filters out technical ones
+(`PHPSESSID`, etc.) and inputs the secret cookie value into the First Name field.
 
 ### TC17 — You looked at the page source
-Получает HTML через `page.content()`, ищет скрытый комментарий вида
-`<!-- token -->` двумя regex-паттернами (строгий → широкий fallback),
-вставляет найденный токен в поле First Name.
+Gets the HTML via `page.content()`, searches for a hidden comment like
+`<!-- token -->` with two regex patterns (strict → broad fallback),
+inputs the found token into the First Name field.
 
 ### TC18 — You made the user admin
-Выполняет JS через `page.evaluate()`, находит скрытый
-`input[name="user_right_as_admin"]`, меняет `value` с `'0'` на `'1'`,
-снимает атрибуты `hidden`/`disabled`, затем отправляет форму.
+Executes JS via `page.evaluate()`, finds the hidden
+`input[name="user_right_as_admin"]`, changes `value` from `'0'` to `'1'`,
+removes `hidden`/`disabled` attributes, then submits the form.
